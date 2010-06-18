@@ -1,29 +1,35 @@
-Zuora API Ruby Quickstart
+Zuora Ruby Quickstart
 
 INTRODUCTION
 ------------
 
-Thank you for downloading the Zuora QuickStart Ruby Toolkit.  This download contains code 
+Thank you for downloading the Zuora Ruby QuickStart.  This download contains code 
 designed to help you begin using Zuora APIs.
 
 REQUIREMENTS
 ------------
 
-Ruby 2.3.2 (install using "gem install -v=2.3.2 rails")
-soap4r (install using "gem install soap4r")
+The following needs to be installed for the example:
 
-Note: the files included in this Quickstart include source that was originally generated using 
-soap4r. They have been modified to work with the Zuora API. The changes made include:
+- Ruby 2.3.2 (install using "gem install -v=2.3.2 rails")
+- soap4r (install using "gem install soap4r")
+
+Note: the files included in this Quickstart include source that was originally generated 
+using soap4r. They have been modified to work with the Zuora API. 
+
+If you choose to generate source from the WSDL, please make sure to incorporate the 
+following manual changes to the code: 
 
 - ZUORA.rb - Added SessionHeader.on_outbound_headeritem() to support headers
 
 CONTENTS
 --------
 
-This zip follows the Ruby directory structure convention, but contains the minimum set for a 
-basic console application.
+This zip follows the Ruby directory structure convention, but contains the minimum set 
+for a basic console application.
 
-    /config/* - environment-specific configuration
+    /app/controllers/* - Controllers for example
+    /app/views/* - Views for example
     /lib/* - Zuora API interface code
     /script/console - Ruby console utility to run sample code interactively
 
@@ -58,13 +64,10 @@ RUNNING THE EXAMPLE
 -------------------
 
 1. On the command line, type "rails ruby-quickstart"
-2. Unzip the files contained in the quickstart_ruby.zip file to that directory, copying files over
-existing files where necessary. 
-3.) Open the /config/envirnonment.rb file and modift the following:
-    a.) 
-    b.) add the following lines at the bottom: 
-k Note: this will also overwrite environment.rb, to disable
-ActiveRecord support. (This example does not use a database.)
+2. Unzip the files contained in the quickstart_ruby.zip file to that directory, copying 
+files over existing files where necessary. Note: this will also overwrite environment.rb.
+If you are integrating with an existing system, note the changes and incorporate them 
+manually.
 3. In /config/environment.rb, set ZUORA_USER and ZUORA_PASSWORD to your username/password.
 4. From the root of the directory, type "ruby script/server"
 5. Open a browser and go to http://localhost:3000/signup/action
