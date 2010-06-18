@@ -7,15 +7,9 @@
 </title></head> 
 <body> 
 
-    status
+    <span id="status"><%= @status %></span> 
  
-    <span id="status"></span> 
- 
-<div> 
-</div> 
-
     <%= form_tag :action => 'action' %>
-    <%= @foo %>
  
     <h2>Select a Product</h2>  
         
@@ -28,7 +22,7 @@
                 </td> 
             </td> 
             <td> 
-                <select name="Products" onchange="" id="Products" maxlength="32" name="Products"> 
+                <select name="Products" onchange="document.forms[0].submit()" id="Products" maxlength="32" name="Products"> 
                 <% for item in @productsSelect do %>
                     <option value="<%= item.value %>" <%= item.selected %>><%= item.name %></option> 
                 <% end %>
@@ -43,7 +37,7 @@
                 </td> 
             </td> 
             <td> 
-                <select name="RatePlans" onchange="" id="RatePlans" maxlength="32" name="RatePlans"> 
+                <select name="RatePlans" onchange="document.forms[0].submit()" id="RatePlans" maxlength="32" name="RatePlans"> 
                 <% for item in @ratePlansSelect do %>
                     <option value="<%= item.value %>" <%= item.selected %>><%= item.name %></option> 
                 <% end %>
@@ -84,7 +78,7 @@
                     First Name *</label> 
             </td> 
             <td> 
-                <input name="FirstName" type="text" id="FirstName" maxlength="40" size="40" value="<%= (@Name.nil? ? "Clement" : @Name) %>" /> 
+                <input name="FirstName" type="text" id="FirstName" maxlength="40" size="40" value="<%= (@FirstName.nil? ? "Clement" : @FirstName) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -93,7 +87,7 @@
                     Last Name *</label> 
             </td> 
             <td> 
-                <input name="LastName" type="text" id="LastName" maxlength="80" size="40" value="<%= (@Name.nil? ? "Banks" : @Name) %>" /> 
+                <input name="LastName" type="text" id="LastName" maxlength="80" size="40" value="<%= (@LastName.nil? ? "Banks" : @LastName) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -102,7 +96,7 @@
                     Email *</label> 
             </td> 
             <td> 
-                <input name="WorkEmail" type="text" id="WorkEmail" maxlength="80" size="40" value="<%= (@Name.nil? ? "cbanks@gmail.com" : @Name) %>" /> 
+                <input name="WorkEmail" type="text" id="WorkEmail" maxlength="80" size="40" value="<%= (@WorkEmail.nil? ? "cbanks@gmail.com" : @WorkEmail) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -111,7 +105,7 @@
                     Phone</label> 
             </td> 
             <td> 
-                <input name="WorkPhone" type="text" id="WorkPhone" maxlength="40" size="40" value="<%= (@Name.nil? ? "415 555 1212" : @Name) %>" /> 
+                <input name="WorkPhone" type="text" id="WorkPhone" maxlength="40" size="40" value="<%= (@WorkPhone.nil? ? "415 555 1212" : @WorkPhone) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -120,7 +114,7 @@
                     Address 1</label> 
             </td> 
             <td> 
-                <input name="Address1" type="text" id="Address1" maxlength="40" size="40" value="<%= (@Name.nil? ? "517 Country Lane" : @Name) %>" /> 
+                <input name="Address1" type="text" id="Address1" maxlength="40" size="40" value="<%= (@Address1.nil? ? "517 Country Lane" : @Address1) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -129,7 +123,7 @@
                     Address 2</label> 
             </td> 
             <td> 
-                <input name="Address2" type="text" id="Address2" maxlength="40" size="40" /> 
+                <input name="Address2" type="text" id="Address2" maxlength="40" size="40" value="<%= (@Address2.nil? ? "" : @Address2) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -138,7 +132,7 @@
                     City</label> 
             </td> 
             <td> 
-                <input name="City" type="text" id="City" maxlength="40" size="40" value="<%= (@Name.nil? ? "Anaheim" : @Name) %>" /> 
+                <input name="City" type="text" id="City" maxlength="40" size="40" value="<%= (@City.nil? ? "Anaheim" : @City) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -147,7 +141,7 @@
                     State</label> 
             </td> 
             <td> 
-                <input name="State" type="text" id="State" maxlength="40" size="40" value="<%= (@Name.nil? ? "CA" : @Name) %>" /> 
+                <input name="State" type="text" id="State" maxlength="40" size="40" value="<%= (@State.nil? ? "CA" : @State) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -168,7 +162,7 @@
                     ZIP/Postal Code</label> 
             </td> 
             <td> 
-                <input name="PostalCode" type="text" id="PostalCode" maxlength="40" size="40" value="<%= (@Name.nil? ? "92808" : @Name) %>" /> 
+                <input name="PostalCode" type="text" id="PostalCode" maxlength="40" size="40" value="<%= (@PostalCode.nil? ? "92808" : @PostalCode) %>" /> 
             </td> 
             </td> 
         </tr> 
@@ -195,7 +189,7 @@
                     Card Number *</label> 
             </td> 
             <td> 
-                <input name="CreditCardNumber" type="text" id="CreditCardNumber" maxlength="40" size="40" value="<%= (@Name.nil? ? "4111111111111111" : @Name) %>" /> 
+                <input name="CreditCardNumber" type="text" id="CreditCardNumber" maxlength="40" size="40" value="<%= (@CreditCardNumber.nil? ? "4111111111111111" : @CreditCardNumber) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -204,7 +198,7 @@
                     Name on Card *</label> 
             </td> 
             <td> 
-                <input name="CreditCardHolderName" type="text" id="CreditCardHolderName" maxlength="40" size="40" value="<%= (@Name.nil? ? "Clement Banks" : @Name) %>" /> 
+                <input name="CreditCardHolderName" type="text" id="CreditCardHolderName" maxlength="40" size="40" value="<%= (@CreditCardHolderName.nil? ? "Clement Banks" : @CreditCardHolderName) %>" /> 
             </td> 
         </tr> 
         <tr> 
@@ -242,12 +236,11 @@
                     ZIP/Postal Code *</label> 
             </td> 
             <td> 
-                <input name="CreditCardPostalCode" type="text" id="CreditCardPostalCode" maxlength="40" size="40" value="<%= (@Name.nil? ? "92808" : @Name) %>" /> 
+                <input name="CreditCardPostalCode" type="text" id="CreditCardPostalCode" maxlength="40" size="40" value="<%= (@CreditCardPostalCode.nil? ? "92808" : @CreditCardPostalCode) %>" /> 
             </td> 
         </tr> 
     </table> 
     <br /> 
     <%= submit_tag "Submit" %>
-    <%= form_tag %>
 </body> 
 </html> 
