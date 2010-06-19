@@ -484,11 +484,12 @@ class ProductRatePlanCharge < ZObject
   attr_accessor :maxQuantity
   attr_accessor :minQuantity
   attr_accessor :model
+  attr_accessor :name
   attr_accessor :productRatePlanId
   attr_accessor :type
   attr_accessor :uOM
 
-  def initialize(fieldsToNull = [], id = nil, accountingCode = nil, defaultQuantity = nil, description = nil, maxQuantity = nil, minQuantity = nil, model = nil, productRatePlanId = nil, type = nil, uOM = nil)
+  def initialize(fieldsToNull = [], id = nil, accountingCode = nil, defaultQuantity = nil, description = nil, maxQuantity = nil, minQuantity = nil, model = nil, name = nil, productRatePlanId = nil, type = nil, uOM = nil)
     @fieldsToNull = fieldsToNull
     @id = id
     @accountingCode = accountingCode
@@ -497,6 +498,7 @@ class ProductRatePlanCharge < ZObject
     @maxQuantity = maxQuantity
     @minQuantity = minQuantity
     @model = model
+    @name = name
     @productRatePlanId = productRatePlanId
     @type = type
     @uOM = uOM

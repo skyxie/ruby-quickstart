@@ -3,6 +3,7 @@ class SignUpController < ApplicationController
   CHARGE_SELECT_LIST = "Id, Name, AccountingCode, DefaultQuantity, Type, Model, ProductRatePlanId"
   @productId = nil
   @prpId = nil
+  @charges = nil
   @status = ""
   
   def action
@@ -29,7 +30,7 @@ class SignUpController < ApplicationController
     @CreditCardExpirationYear = params[:CreditCardExpirationYear]
     @CreditCardPostalCode = params[:CreditCardPostalCode]
     
-    @zuora = ZuoraApi.new
+    @zuora = ZuoraInterface.new
     @zuora.session_start
     
     init
@@ -112,40 +113,40 @@ class SignUpController < ApplicationController
   
   def validate
     
-    @valid = true;
+    @valid = true
     @isSubmit = !params[:commit].nil?
     if !@isSubmit
-      return false;
+      return false
     else 
       
       if @productId.nil?
-        status = "Please select a Product.";
-        return false;
+        status = "Please select a Product."
+        return false
       end
       if @prpId.nil?
-        status = "Please select a Rate Plan.";
-        return false;
+        status = "Please select a Rate Plan."
+        return false
       end
-      if @charges.nil?
-        status = "Please select Charges.";
-        return false;
+      if @charges.nil? || @charges.length == 0
+        status = "Please select Charges."
+        return false
       end
       
-      @valid = @valid && validateValue(:Name);
-      @valid = @valid && validateValue(:FirstName);
-      @valid = @valid && validateValue(:LastName);
-      @valid = @valid && validateValue(:WorkEmail);
-      @valid = @valid && validateValue(:WorkPhone);
-      @valid = @valid && validateValue(:Address1);
-      @valid = @valid && validateValue(:City);
-      @valid = @valid && validateValue(:State);
-      @valid = @valid && validateValue(:Country);
-      @valid = @valid && validateValue(:PostalCode);
-      @valid = @valid && validateValue(:CreditCardHolderName);
-      @valid = @valid && validateValue(:CreditCardNumber);
-      @valid = @valid && validateValue(:CreditCardExpirationMonth);
-      @valid = @valid && validateValue(:CreditCardExpirationYear);
-      @valid = @valid && validateValue(:CreditCardType);
+      @valid = @valid && validateValue(:Name)
+      @valid = @valid && validateValue(:FirstName)
+      @valid = @valid && validateValue(:LastName)
+      @valid = @valid && validateValue(:WorkEmail)
+      @valid = @valid && validateValue(:WorkPhone)
+      @valid = @valid && validateValue(:Address1)
+      @valid = @valid && validateValue(:City)
+      @valid = @valid && validateValue(:State)
+      @valid = @valid && validateValue(:Country)
+      @valid = @valid && validateValue(:PostalCode)
+      @valid = @valid && validateValue(:CreditCardHolderName)
+      @valid = @valid && validateValue(:CreditCardNumber)
+      @valid = @valid && validateValue(:CreditCardExpirationMonth)
+      @valid = @valid && validateValue(:CreditCardExpirationYear)
+      @valid = @valid && validateValue(:CreditCardType)
     end
     
   end
@@ -161,8 +162,144 @@ class SignUpController < ApplicationController
   
   def subscribe
     
+    @month = @CreditCardExpirationMonth.to_i
+    @year = @CreditCardExpirationYear.to_i
+    
+    @chargesArray = Array.new
+    for id in @charges do
+      @charge = ZUORA::ProductRatePlanCharge.new
+      @charge.id = id
+      @charge.productRatePlanId = @prpId
+      @chargesArray << @charge
+    end
+    
+    @subscriptionName = @Name + " New Signup (" + Time.now.strftime("%y%m%d%H%M%S") + ")"
+    
+    @status = "subscribe: " + @subscriptionName
+    
+    @acc = ZUORA::Account.new
+    @acc.name = @Name
+    @acc.status = "Draft"
+    @acc.paymentTerm = "Due Upon Receipt"
+    @acc.batch = "Batch1"
+    @acc.billCycleDay = 1
+    @acc.allowInvoiceEdit = true
+    @acc.autoPay = false
+    @acc.currency = "USD"
+    
+    @con = ZUORA::Contact.new
+    @con.firstName = @FirstName
+    @con.lastName = @LastName
+    @con.workEmail = @WorkEmail
+    @con.workPhone = @WorkPhone
+    @con.address1 = @Address1
+    @con.address2 = @Address2
+    @con.city = @City
+    @con.state = @State
+    @con.country = @Country
+    @con.postalCode = @PostalCode
+    
+    @pm = ZUORA::PaymentMethod.new
+    @pm.type = "CreditCard"
+    @pm.creditCardHolderName= @CreditCardHolderName
+    @pm.creditCardCity= @City
+    @pm.creditCardState= @State
+    @pm.creditCardPostalCode= @CountryPostalCode
+    @pm.creditCardType= @CreditCardType
+    @pm.creditCardNumber= @CreditCardNumber
+    @pm.creditCardExpirationMonth= @CreditCardExpirationMonth
+    @pm.creditCardExpirationYear= @CreditCardExpirationYear
+    
+    @calendar = nil
+    @sub = ZUORA::Subscription.new
+    @sub.name = @subscriptionName
+    @sub.notes = nil
+    @sub.termStartDate = @calendar
+    @sub.contractEffectiveDate= @calendar
+    @sub.contractAcceptanceDate= @calendar
+    @sub.serviceActivationDate= @calendar
+    @sub.initialTerm = 12
+    @sub.renewalTerm = 12
+    
+    @sd = ZUORA::SubscriptionData.new
+    @sd.subscription = @sub
+    
+    @subscriptionRatePlanDataArray = makeRatePlanData(@chargesArray)
+    @sd.ratePlanData = @subscriptionRatePlanDataArray
+    
+    @options = ZUORA::SubscribeOptions.new
+    @options.generateInvoice = false 
+    @options.processPayments = false
+    
+    @subRequest = ZUORA::SubscribeRequest.new
+    @subRequest.account = @acc
+    @subRequest.billToContact = @con
+    @subRequest.paymentMethod = @pm
+    @subRequest.subscriptionData = @sd
+    @subRequest.subscribeOptions = @options
+    
+    @subscribes = ZUORA::Subscribe.new
+    @subscribes << @subRequest
+    @result = @zuora.subscribe(@subscribes)[0]
+    
+    @status = createMessage(@result)
+    
   end
   
+  def makeRatePlanData(chargesArray) 
+    
+    @data = Array.new
+    
+    for charge in chargesArray do 
+      @ratePlanData = ZUORA::RatePlanData.new
+      
+      @ratePlan = ZUORA::RatePlan.new
+      @ratePlanData.ratePlan = @ratePlan
+      @ratePlan.amendmentType = "NewProduct"
+      @ratePlan.productRatePlanId = charge.productRatePlanId
+      
+      @ratePlanCharge = ZUORA::RatePlanCharge.new
+      @ratePlanChargeArray = Array.new
+      @ratePlanChargeArray << @ratePlanCharge
+      @ratePlanData.ratePlanCharge = @ratePlanChargeArray
+      
+      @ratePlanCharge.productRatePlanChargeId = charge.id
+      if !charge.defaultQuantity.nil? && charge.defaultQuantity > 0 
+        @ratePlanCharge.quantity = 1
+      end
+      @ratePlanCharge.triggerEvent = "ServiceActivation"
+      
+      @data << @ratePlanData;
+    end
+    
+    return @data;
+  end
+  
+  def createMessage(result) 
+    @resultString = ""
+    if !@result.nil?
+      if result.success
+        @resultString = @resultString + "<b>Subscribe Result: Success</b>"
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Account Id: " + result.accountId
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Account Number: " + result.accountNumber
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Subscription Id: " + result.subscriptionId
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Subscription Number: " + result.subscriptionNumber
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Invoice Number: " + (result.paymentTransactionNumber.nil? ? "" : result.paymentTransactionNumber) 
+        @resultString = @resultString + "<br>&nbsp;&nbsp;Payment Transaction: " + (result.paymentTransactionNumber.nil? ? "" : result.paymentTransactionNumber)
+        
+      else 
+        @resultString = @resultString + "<b>Subscribe Result: Failed</b>"
+        if !@result.errors.nil?
+          for error in @result.errors do
+            @resultString = @resultString + "<br>&nbsp;&nbsp;Error Code: " + error.code
+            @resultString = @resultString + "<br>&nbsp;&nbsp;Error Message: " + error.message
+          end
+        end
+      end
+      return @resultString
+    end
+    
+  end
 end
 
 class SelectItem

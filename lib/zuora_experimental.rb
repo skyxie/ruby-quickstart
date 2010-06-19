@@ -1,5 +1,5 @@
 require 'zuora/api.rb'
-class ZuoraApi
+class ZuoraExperimental
   include Validatable
   
   attr_accessor :fee, 

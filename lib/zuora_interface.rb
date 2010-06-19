@@ -1,71 +1,71 @@
 require 'zuora/api.rb'
 
-class ZuoraApi
-
+class ZuoraInterface
+  
   def run_test
-
+    
     session_start
-
+    
     # create active account
     e = create_active_account("name" + String(Time.now.to_f))
-
+    
     # query it
     r = query("SELECT Name FROM Account WHERE Name = '#{e.name}' and status = 'Active'")
     e = r.result.records[0]
-
+    
     # delete it
     @z.delete("Account", [e.id])
-
+    
     session_cleanup
   end
-
+  
   def create_active_account(name)
-
+    
     val = false
     session_start 
     account = make_account(name)
     result = @z.create([account])
     puts result.first.inspect
-
+    
     if result.first.success
-
+      
       accountId = result.first.id
       payment = make_payment_method(accountId)
       result = @z.create([payment])
-
+      
       if result.first.success
-
+        
         paymentId = result.first.id
         con = make_contact(accountId)
         result = @z.create([con])
-
+        
         if result.first.success
-           conId = result.first.id
-
-           account.id = accountId
-           account.status = 'Active'
-           account.billToId = conId
-           account.soldToId = conId
-           result = @z.update([account])
-
-           if result.first.success
-               val = account
-           else
-              add_errors(result)
-           end
-
+          conId = result.first.id
+          
+          account.id = accountId
+          account.status = 'Active'
+          account.billToId = conId
+          account.soldToId = conId
+          result = @z.update([account])
+          
+          if result.first.success
+            val = account
+          else
+            add_errors(result)
+          end
+          
         else
-           add_errors(result)
+          add_errors(result)
         end
       else
-         add_errors(result)
+        add_errors(result)
       end
     else
       add_errors(result)
     end
     return val
   end
-
+  
   def make_account(accountName)
     acc = ZUORA::Account.new
     acc.allowInvoiceEdit = 0
@@ -78,7 +78,7 @@ class ZuoraApi
     acc.billCycleDay = "01"
     return acc
   end
-
+  
   def make_contact(accountId)
     con = ZUORA::Contact.new
     con.accountId = accountId
@@ -92,7 +92,7 @@ class ZuoraApi
     con.workEmail = 'robert@smith.com';
     return con
   end
-
+  
   def make_payment_method(accountId)
     pmt = ZUORA::PaymentMethod.new
     pmt.accountId = accountId
@@ -109,12 +109,17 @@ class ZuoraApi
     pmt.type = 'CreditCard';
     return pmt
   end
-
+  
   def query(query)
     q = ZUORA::Query.new
     q.queryString = query
     results = @z.query(q)
     return results
+  end
+  
+  def subscribe(sub)
+    resp = @z.subscribe(sub)
+    return resp
   end
   
   def get_object(query)
@@ -134,7 +139,7 @@ class ZuoraApi
       return []
     end
   end
-
+  
   def create
   end
   
@@ -168,9 +173,8 @@ class ZuoraApi
 end
 
 if __FILE__ == $0
-
-    t = ZuoraApi.new
-    t.run_test
-
+  
+  t = ZuoraInterface.new
+  t.run_test
+  
 end
-
