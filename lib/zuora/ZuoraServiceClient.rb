@@ -1,7 +1,3 @@
-#!/usr/bin/env ruby
-require 'ZUORADriver.rb'
-
-
 module ZUORA
 
 endpoint_url = ARGV.shift

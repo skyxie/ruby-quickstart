@@ -1,70 +1,6 @@
-require 'zuora/api.rb'
+require 'zuora/api'
 
 class ZuoraInterface
-  
-  def run_test
-    
-    session_start
-    
-    # create active account
-    e = create_active_account("name" + String(Time.now.to_f))
-    
-    # query it
-    r = query("SELECT Name FROM Account WHERE Name = '#{e.name}' and status = 'Active'")
-    e = r.result.records[0]
-    
-    # delete it
-    @z.delete("Account", [e.id])
-    
-    session_cleanup
-  end
-  
-  def create_active_account(name)
-    
-    val = false
-    session_start 
-    account = make_account(name)
-    result = @z.create([account])
-    puts result.first.inspect
-    
-    if result.first.success
-      
-      accountId = result.first.id
-      payment = make_payment_method(accountId)
-      result = @z.create([payment])
-      
-      if result.first.success
-        
-        paymentId = result.first.id
-        con = make_contact(accountId)
-        result = @z.create([con])
-        
-        if result.first.success
-          conId = result.first.id
-          
-          account.id = accountId
-          account.status = 'Active'
-          account.billToId = conId
-          account.soldToId = conId
-          result = @z.update([account])
-          
-          if result.first.success
-            val = account
-          else
-            add_errors(result)
-          end
-          
-        else
-          add_errors(result)
-        end
-      else
-        add_errors(result)
-      end
-    else
-      add_errors(result)
-    end
-    return val
-  end
   
   def make_account(accountName)
     acc = ZUORA::Account.new
@@ -110,6 +46,53 @@ class ZuoraInterface
     return pmt
   end
   
+  def create_active_account(name)
+    
+    val = false
+    session_start 
+    account = make_account(name)
+    result = create([account])
+    puts result.first.inspect
+    
+    if result.first.success
+      
+      accountId = result.first.id
+      payment = make_payment_method(accountId)
+      result = create([payment])
+      
+      if result.first.success
+        
+        paymentId = result.first.id
+        con = make_contact(accountId)
+        result = create([con])
+        
+        if result.first.success
+          conId = result.first.id
+          
+          account.id = accountId
+          account.status = 'Active'
+          account.billToId = conId
+          account.soldToId = conId
+          result = update([account])
+          
+          if result.first.success
+            val = account
+          else
+            add_errors(result)
+          end
+          
+        else
+          add_errors(result)
+        end
+      else
+        add_errors(result)
+      end
+    else
+      add_errors(result)
+    end
+    return val
+  end
+  
   def query(query)
     q = ZUORA::Query.new
     q.queryString = query
@@ -117,9 +100,20 @@ class ZuoraInterface
     return results
   end
   
+  def create(objs)
+    return @z.create(objs)
+  end
+  
+  def update(objs)
+    return @z.update(objs)
+  end
+  
+  def delete(type, ids)
+    return @z.delete(type, ids)
+  end
+  
   def subscribe(sub)
-    resp = @z.subscribe(sub)
-    return resp
+    return @z.subscribe(sub)
   end
   
   def get_object(query)
@@ -138,9 +132,6 @@ class ZuoraInterface
     else
       return []
     end
-  end
-  
-  def create
   end
   
   def get_driver
@@ -175,6 +166,22 @@ end
 if __FILE__ == $0
   
   t = ZuoraInterface.new
-  t.run_test
+  t.session_start
+  
+  # create active account
+  e = t.create_active_account("name" + String(Time.now.to_f))
+  puts "Created Account: " + e.id
+  
+  # query it
+  r = query("SELECT Name FROM Account WHERE Name = '#{e.name}' and status = 'Active'")
+  e = r.result.records[0]
+  puts "Queried Account: " + e.name
+  
+  # delete it
+  t.delete("Account", [e.id])
+  puts "Deleted Account: " + e.id
+  
+  t.session_cleanup
+  
   
 end

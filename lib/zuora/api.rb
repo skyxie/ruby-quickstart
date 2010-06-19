@@ -1,5 +1,9 @@
 require 'singleton'
 
+require 'zuora/ZUORA'
+require 'zuora/ZUORADriver'
+require 'zuora/ZUORAMappingRegistry'
+
 module Zuora
   module Billing
     class Api

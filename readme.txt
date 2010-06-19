@@ -60,8 +60,8 @@ The following are pre-requisites to successfully run the sample code:
     a.) Either Authorize.net, CyberSource, PayPal Payflow Pro (production or test)
     b.) The setting "Verify new credit card" disabled
 
-RUNNING THE EXAMPLE
--------------------
+RUNNING THE SIGNUP EXAMPLE
+--------------------------
 
 1. On the command line, type "rails ruby-quickstart"
 2. Unzip the files contained in the quickstart_ruby.zip file to that directory, copying 
@@ -72,8 +72,8 @@ manually.
 4. From the root of the directory, type "ruby script/server"
 5. Open a browser and go to http://localhost:3000/signup/action
 
-INCLUDED IN THE EXAMPLE
------------------------
+RUNNING THE COMMAND-LINE EXAMPLE
+--------------------------------
 
 This example does the following:
 
@@ -95,21 +95,5 @@ This example does the following:
 
     >> @z.delete("Account", e.id)
     >> r.result.records[0]
-
-5. Queries Product Catalog by AccountingCode
-
-    TBD
-
-6. Calls subscribe() to create new Account w/ Subscription
-
-    TBD
-
-
-
-
-  
-
-
-
 
 

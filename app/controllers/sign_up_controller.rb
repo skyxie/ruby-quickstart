@@ -173,7 +173,7 @@ class SignUpController < ApplicationController
       @chargesArray << @charge
     end
     
-    @subscriptionName = @Name + " New Signup (" + Time.now.strftime("%y%m%d%H%M%S") + ")"
+    @subscriptionName = @Name + " New Signup (" + Time.now.to_s + ")"
     
     @status = "subscribe: " + @subscriptionName
     

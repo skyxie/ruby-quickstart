@@ -1,11 +1,8 @@
-require 'ZUORA.rb'
-require 'ZUORAMappingRegistry.rb'
 require 'soap/rpc/driver'
 
 module ZUORA
 
 class Soap < ::SOAP::RPC::Driver
-  DefaultEndpointUrl = ZUORA_ENDPOINT
 
   Methods = [
     [ "",
@@ -67,7 +64,7 @@ class Soap < ::SOAP::RPC::Driver
   ]
 
   def initialize(endpoint_url = nil)
-    endpoint_url ||= DefaultEndpointUrl
+    endpoint_url ||= ZUORA_ENDPOINT
     super(endpoint_url, nil)
     self.mapping_registry = DefaultMappingRegistry::EncodedRegistry
     self.literal_mapping_registry = DefaultMappingRegistry::LiteralRegistry

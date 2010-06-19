@@ -1,4 +1,3 @@
-require 'ZUORA.rb'
 require 'soap/mapping'
 
 module ZUORA

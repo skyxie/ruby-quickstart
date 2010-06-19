@@ -1,4 +1,5 @@
-require 'zuora/api.rb'
+require 'zuora/api'
+
 class ZuoraExperimental
   include Validatable
   
