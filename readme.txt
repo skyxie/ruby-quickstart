@@ -30,11 +30,18 @@ for a basic console application.
 
     /app/controllers/* - Controllers for example
     /app/views/* - Views for example
+    /config/environment.rb - default environment settings, which includes 
+        - adding zuora libraries to lib path (and loading)
+        - disabling Active Record (no database)
+        - default Zuora username/password parameters
+        - overriding HandlerSet to allow setting of headers
     /lib/* - Zuora API interface code
-    /script/console - Ruby console utility to run sample code interactively
+    /readme.txt - this file
+    /zuora.17.0.wsdl - version 17.0 of the zuora WSDL
 
 For more information on the directory structure, see: 
-http://www.tutorialspoint.com/ruby-on-rails/rails-directory-structure.htm
+
+    http://www.tutorialspoint.com/ruby-on-rails/rails-directory-structure.htm
 
 DOCUMENTATION & SUPPORT
 -----------------------
@@ -60,8 +67,11 @@ The following are pre-requisites to successfully run the sample code:
     a.) Either Authorize.net, CyberSource, PayPal Payflow Pro (production or test)
     b.) The setting "Verify new credit card" disabled
 
-RUNNING THE SIGNUP EXAMPLE
+SETTING UP YOUR ENVIRONMENT
 --------------------------
+
+The overall goal is to set up a default ruby environment and copy the Zuora-specific files 
+into it. 
 
 1. On the command line, type "rails ruby-quickstart"
 2. Unzip the files contained in the quickstart_ruby.zip file to that directory, copying 
@@ -69,31 +79,22 @@ files over existing files where necessary. Note: this will also overwrite enviro
 If you are integrating with an existing system, note the changes and incorporate them 
 manually.
 3. In /config/environment.rb, set ZUORA_USER and ZUORA_PASSWORD to your username/password.
-4. From the root of the directory, type "ruby script/server"
-5. Open a browser and go to http://localhost:3000/signup/action
+
+RUNNING THE SIGNUP EXAMPLE
+--------------------------
+
+Once the environment is set up, you only need to start the Ruby server.
+
+1. From the root of the directory, type "ruby script/server"
+2. Open a browser and go to http://localhost:3000/signup/action
 
 RUNNING THE COMMAND-LINE EXAMPLE
 --------------------------------
 
-This example does the following:
+1. From the root of the directory, type "ruby script/console"
+2. In the command line, you will see the >> prompt. Do the following to execute the set of tests:
 
-1. Create Driver and Login
-
-    >> t = ZuoraApi.new
-    >> t.session_start
-
-2. Creates an Active Account (Account w/ Status=Active and Bill To Contact/Payment Method)
-
-    >> e = t.create_active_account
-
-3. Queries accounts and print out account name for first record
-
-    >> r = t.query("SELECT Name FROM Account")
-    >> e = r.result.records[0]
-
-4. Delete Account
-
-    >> @z.delete("Account", e.id)
-    >> r.result.records[0]
+    >> t = ZuoraInterface.new
+    >> t.run_tests
 
 

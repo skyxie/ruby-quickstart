@@ -109,7 +109,10 @@ class ZuoraInterface
   end
   
   def delete(type, ids)
-    return @z.delete(type, ids)
+    d = ZUORA::Delete.new
+    d.type = type
+    d.ids = ids
+    return @z.delete(d)
   end
   
   def subscribe(sub)
@@ -163,7 +166,9 @@ class ZuoraInterface
   end
 end
 
-if __FILE__ == $0
+public 
+
+def run_tests
   
   t = ZuoraInterface.new
   t.session_start
@@ -173,15 +178,17 @@ if __FILE__ == $0
   puts "Created Account: " + e.id
   
   # query it
-  r = query("SELECT Name FROM Account WHERE Name = '#{e.name}' and status = 'Active'")
+  r = t.query("SELECT Id, Name FROM Account WHERE Name = '#{e.name}' and status = 'Active'")
   e = r.result.records[0]
-  puts "Queried Account: " + e.name
+  puts "Queried Account: " + e.to_s
   
   # delete it
-  t.delete("Account", [e.id])
-  puts "Deleted Account: " + e.id
+  r = t.delete("Account", [e.id])
+  puts "Deleted Account? " + r[0].success.to_s
   
   t.session_cleanup
-  
-  
+
+end
+
+if __FILE__ == $0
 end
