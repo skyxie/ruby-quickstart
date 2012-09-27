@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title><%= @title %></title>
+<style type="text/css">
+  .object { border: 1px solid #000; margin: 5px 1px 5px 15px; padding: 5px 1px 5px 15px; float:left; }
+
+  .odd { background-color: #E0E0E0 }
+  .even { background-color: #F0F0F0 }
+
+  .name { width: 500px; font-size: 24px; margin-top: 10px; }
+
+  .attribute_block { float:left;}
+  .attribute { height: 20px; width: 600px; float:left;}
+  .attribute_item { width: 290px; float:left; }
+  .key { font-weight: bold; text-align: right; padding-right: 5px; }
+  .value { text-align: left; padding-left: 5px; }
+
+  .tree { width: 100%; }
+</style>
+</head>
+<body>
+
+  <h1><%= @title %></h1>
+  <div class="tree">
+    <%= partial(:_tree, :locals => { "objs" => @object_tree, "lvl" => 1 }) %>
+  </div>
+
+</body>
+</html>

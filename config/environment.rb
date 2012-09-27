@@ -1,62 +1,14 @@
-# Be sure to restart your server when you modify this file
+require "sinatra"
+require "sinatra/partial"
+require "json"
+require "yaml"
+require "zuora-ruby"
+require "zuora_ruby_quickstart"
 
-# Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.2' unless defined? RAILS_GEM_VERSION
+ZUORA_CONFIG = YAML.load_file(File.join(File.dirname(__FILE__), "credentials.yml"))
+ZUORA_PAYMENT_FORMS = YAML.load_file(File.join(File.dirname(__FILE__), "payment_forms.yml"))
 
-# Bootstrap the Rails environment, frameworks, and default configuration
-require File.join(File.dirname(__FILE__), 'boot')
+Zuora::Ruby::Api.login(ZUORA_CONFIG[:username], ZUORA_CONFIG[:password])
 
-gem 'soap4r'
-
-Rails::Initializer.run do |config|
-  config.load_paths += %W( #{RAILS_ROOT}/lib )
-  # Settings in config/environments/* take precedence over those specified here.
-  # Application configuration should go into files in config/initializers
-  # -- all .rb files in that directory are automatically loaded.
-
-  # Add additional load paths for your own custom dirs
-  # config.load_paths += %W( #{RAILS_ROOT}/extras )
-
-  # Specify gems that this application depends on and have them installed with rake gems:install
-  # config.gem "bj"
-  # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  # config.gem "sqlite3-ruby", :lib => "sqlite3"
-  # config.gem "aws-s3", :lib => "aws/s3"
-
-  # Only load the plugins named here, in the order given (default is alphabetical).
-  # :all can be used as a placeholder for all plugins not explicitly named
-  # config.plugins = [ :exception_notification, :ssl_requirement, :all ]
-
-  # Skip frameworks you're not going to use. To use Rails without a database,
-  # you must remove the Active Record framework.
-  config.frameworks -= [ :active_record ]
-
-  # Activate observers that should always be running
-  # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
-  # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-  # Run "rake -D time" for a list of tasks for finding time zone names.
-  config.time_zone = 'UTC'
-
-  # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-  # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
-  # config.i18n.default_locale = :de
-  
-end
-
-ZUORA_USER = "<your username>"
-ZUORA_PASSWORD = "<your password>"
-ZUORA_ENDPOINT = "https://www.zuora.com/apps/services/a/17.0"
-
-require 'zuora/api'
-
-class SOAP::Header::HandlerSet
-  def reset
-    @store = XSD::NamedElements.new
-  end
-
-  def set(header)
-    reset
-    add header
-  end
-end
-
+Zuora::Ruby::PaymentForm.tenant_id = ZUORA_PAYMENT_FORMS[:tenant_id]
+Zuora::Ruby::PaymentForm.api_security_key = ZUORA_PAYMENT_FORMS[:api_security_key]

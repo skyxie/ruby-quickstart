@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <style type="text/css">
+      .row { width:100%; float:left; margin-top: 2px; margin-bottom: 2px; padding-top: 2px; padding-bottom: 2px;}
+      .attribute { width: 100px; height:20px; float:left; }
+      .key { font-weight: bold; }
+      .value { padding-left: 10px; }
+      .hidden { display: none;}
+    </style>
+    <script type="text/javascript" src="https://www.zuora.com/apps/Hosted/postmessage.js"></script>
+  </head>
+  <body>
+    <form name="subscription" action="http://developer.animoto.com/zuora/create" method="post">
+
+      <% %w{email first_name last_name}.each do |attribute| %>
+        <div class="row">
+          <div class="attribute key"><%= attribute %></div>
+          <div class="attribute value"><input name="<%= attribute %>" type="text" /></div>
+        </div>
+      <% end %>
+
+      <div class="row">
+        <div class="attribute key">plan</div>
+        <div class="attribute value">
+          <select name="product_rate_plan_charge_id" id="product_rate_plan_charge">
+            <% @products.each do |product| %>
+              <% product.product_rate_plans.each do |plan| %>
+                <% plan.product_rate_plan_charges.each do |charge| %>
+                  <option value="<%= charge.id %>"><%= product.name %> - <%= plan.name %> - <%= charge.billingPeriod %> <%= charge.chargeModel %></option>
+                <% end %>
+              <% end %>
+            <% end %>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <iframe id="z_hppm_iframe" name="z_hppm_iframe" width="500px" height="215px" src="<%= @form.iframe_url %>"></iframe>
+      </div>
+      
+      <div class="row">
+        <button type="button" onclick='submitHostedPage("z_hppm_iframe");'>Validate Credit Card</button>
+      </div>
+
+      <div class="row">
+        <input type="submit" value="Subscribe" />
+      </div>
+    </form>
+  </body>
+</html>

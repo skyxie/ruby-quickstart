@@ -1,0 +1,25 @@
+<% if objs %>
+  <% objs.each do |obj| %>
+    <div class="object <%= lvl % 2 == 0 ? "even" : "odd" %>">
+      
+      <div class="name">
+        <b><%= obj["name"] %></b>
+      </div>
+
+      <div class="attributes_block">
+        <% obj.each_pair do |key, val| %>
+          <% if !["Name", "Class", "children"].include?(key) %>
+            <div class="attribute">
+              <div class="attribute_item key"><%= key %></div>
+              <div class="attribute_item value"><%= val %></div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if obj["children"] && obj["children"].size > 0 %>
+        <%= partial(:_tree, :locals => { :objs => obj["children"], :lvl => lvl + 1 }) %>
+      <% end %>
+      </div>
+  <% end %>
+<% end %>
